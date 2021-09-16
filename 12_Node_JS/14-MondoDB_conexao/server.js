@@ -1,5 +1,17 @@
+require('dotenv').config()
+
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
+
+
+mongoose.connect(process.env.CONNECTIONSTRING, {useNewUrlParser: true, useUnifiedTopology: true})
+.then(() => {
+    app.emit('pronto');
+})
+.catch(e => console.log(e));
+
+
 const routes = require('./routes'); // importando o que esta em routes
 const path = require('path');// Trabalhando com caminho absoluto
 const { dirname } = require('path');
@@ -15,10 +27,11 @@ app.set('view engine', 'ejs'); //Para mexer no html
 
 app.use(routes);
 
-
+app.on('pronto', () => {
+    app.listen(3333, () => {
+        console.log('Servidor inicializado!');
+    });
+});
 // Fazer o servidor ouvir o porta do servidor
 // Estartar o servidor node server.js
 // Ctrl C -> para o servidor
-app.listen(3333, () => {
-    console.log('Servidor inicializado!');
-});
